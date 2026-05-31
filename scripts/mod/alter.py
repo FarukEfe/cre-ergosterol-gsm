@@ -1,132 +1,93 @@
 # Cobra package
 from cobra import io
-from cobra.core import Reaction, Metabolite
+from cobra.core import Reaction, Metabolite, Model
+
 # Other
 import os, sys, argparse
 import pandas as pd
-from json import loads
+from typing import Literal
+from itertools import product
 
 # Toolbox
-from scripts.helpers.tools import split_coef, split_coef_reac
-from scripts.helpers.model import add_single_gene_reaction_pair, met_in_model
+from scripts.utils.parse_stoic import parse_stoichiometry
 
-def alter(argpath: str, chloroplast: bool):
+def alter(
+    args, 
+    ref: Model,
+    ref_name: str,
+    rxns_df: pd.DataFrame,
+    genes_df: pd.DataFrame,
+    sqe_source: Literal['Bb', 'Sc', 'Cf', None] = None, 
+    sqs_source: Literal['Sc', 'Cl', 'Tv', None] = None,
+    mva: bool = False
+):
 
-    ref, _ = io.validate_sbml_model(argpath, validate=True)
-    if not ref:
-        print('No model recognized. Exiting...')
-        sys.exit(1)
+    # Safety
+    if sqe_source not in ['Bb', 'Sc', 'Cf', None]:
+        raise ValueError(f"Invalid SQE source '{sqe_source}'. Must be one of 'Bb', 'Sc', 'Cf', or None.")
+    if sqs_source not in ['Sc', 'Cl', 'Tv', None]:
+        raise ValueError(f"Invalid SQS source '{sqs_source}'. Must be one of 'Sc', 'Cl', 'Tv', or None.")
 
-    # Extract model name
-    ref_name = os.path.split(args.sbmlpath)[-1].split('.')[0]
+    # Add reactions and fill gene annotations (model already copied)
+    print("Adding rxns ...\n")
+    for _, row in rxns_df.iterrows():
 
-    # Import alteration tables for reactions and compounds
-    rxns_df = pd.read_csv("./data/altered/tables/stable/reactions.csv")
-    cpds_df = pd.read_csv("./data/altered/tables/stable/compounds.csv")
+        # Filter out if no in current construct
+        if not (
+            (sqe_source and (row['sbml_id'] == f'ALT_SQE{sqe_source}')) or
+            (sqs_source and (
+                row['sbml_id'] == f'ALT_SQS{sqs_source}' or
+                row['sbml_id'] == f'ALT_PSPPS{sqs_source}'
+                )
+            ) or
+            (mva and row['sbml_id'] in ['ALT_MVAS', 'ALT_MVAE', 'ALT_MVK', 'ALT_PMK', 'ALT_MVAD', 'ALT_IDLI'])
+        ):
+            continue
 
-    # Load blueprint of alterations
-    bp_path = "./data/altered/blueprint.json"
-    if not os.path.exists(bp_path): # Will never happen in the current setup
-        print(f"Blueprint file not found at {bp_path}. Exiting...")
-        sys.exit(1)
-    
-    blueprint = []
-    with open(bp_path, 'r') as f:
-        blueprint = loads(f.read())
-    
-    # Add compounds to reference from cpds_df
-    for cpd in cpds_df['ID'].values:
-        # Get the fields of ID, Name, and Formula, and separate into variables
-        cpd_id = cpd
-        cpd_name = cpds_df[cpds_df['ID'] == cpd]['NAME'].values[0]
-        cpd_formula = cpds_df[cpds_df['ID'] == cpd]['FORMULA'].values[0]
-        cpd_comp = 'c'
+        try:
+            # Ignore if reaction already in model (from sbml)
+            rxn = ref.reactions.get_by_id(row['sbml_id'])
+        except KeyError:
+            # Add reaction fields to object
+            rxn = Reaction(row['sbml_id'])
+            rxn.name = row['display_name']
+            rxn.lower_bound = float(row['lower_bound'])
+            rxn.upper_bound = float(row['upper_bound'])
+            rxn.subsystem = row['subsystem']
+            rxn.annotation = {
+                'kegg.reaction': row['kegg_reaction_id'],
+                'ec-code': row['ec_number'],
+            }
+            # Add metabolites to reaction
+            rxn.add_metabolites(parse_stoichiometry(eqn=row['stoichiometric_equation'], model=ref))
+            # Add gpr to reaction if exists
+            if pd.notna(row['gpr_rule']) and row['gpr_rule'].strip():
+                rxn.gene_reaction_rule = row['gpr_rule']
+            # Add reaction to model
+            ref.add_reactions([rxn])
 
-        if chloroplast:
-            cpd_comp = 'h'
-            cpd_id = cpd[:-2] + "_h"
+    print("Patching gene annotations ...\n")
+    for _, row in genes_df.iterrows():
 
-        # Make new metabolite and save to model
-        newMet = Metabolite(
-            id=cpd_id,
-            name=cpd_name,
-            formula=cpd_formula,
-            charge=0, # Default charge (could change later)
-            compartment=cpd_comp,
-        )
-        ref.add_metabolites([newMet])
-    
-    # Build each blueprint iteration
-    for item in blueprint:
+        try: 
+            gene = ref.genes.get_by_id(row['sbml_id'])
+            gene.name = row['display_name']
+            gene.annotation = {
+                'kegg.genes': row['annotation_kegg_genes'] if pd.notna(row['annotation_kegg_genes']) else '',
+                'uniprot': row['uniprot_accession'] if pd.notna(row['uniprot_accession']) else '',
+            }
+        except KeyError: 
+            continue # Gene not referenced by any reaction GPR. Skip.
 
-        print(f"\n\nProcessing item: {item['name']}")
-        model = ref.copy()
-        model.name = ref_name + "_" + item['name']
+    # Print out results
+    new_name = f"{ref_name}{f'_SQS{sqs_source}' if sqs_source else ''}{f'_SQE{sqe_source}' if sqe_source else ''}{'_MVA' if mva else ''}"
+    print(f"New model {new_name} has {len(ref.reactions)} reactions.")
 
-        if chloroplast:
-            # Add aacoa_h <--> aacoa_c reaction for safety
-
-            # ACCOAh = model.metabolites.get_by_id('accoa_h')
-            # CoAh = model.metabolites.get_by_id('coa_h')
-
-            # Add Acetoacetyl-CoA for chloroplast
-            AACOAc = model.metabolites.get_by_id('aacoa_c')
-            AACOAh = Metabolite(
-                id='aacoa_h',
-                name='Acetoacetyl-CoA',
-                formula=AACOAc.formula,
-                charge=0,
-                compartment='h',
-            )
-            model.add_metabolites([AACOAh])
-            # Add the transport reaction
-            add_single_gene_reaction_pair(
-                model=model,
-                gene_id='AACOAth',
-                reaction_id='AACOAth',
-                reaction_name='Acetoacetyl-CoA:CoA antiporter, Chloroplast',
-                reaction_subsystem='Transport, chloroplast',
-                metabolites=[(-1, AACOAc.id), (1, AACOAh.id)],
-                reversible=True
-            )
-
-        # Add reactions in blueprint iteration
-        for _, row in rxns_df.iterrows():
-
-            # Ignore if blueprint item doesn't contain the enzyme ec
-            if not row['EC'] in item['ec']: continue
-
-            # Get list of metabolites involved in the reaction
-            reactants = list(map(split_coef_reac, row['REACTANTS'].split('+')))
-            products = list(map(split_coef, row['PRODUCTS'].split('+')))
-            mets = [*reactants, *products]
-
-            if chloroplast and row['EC'] not in ["2.5.1.21", "1.14.14.17"]:
-                mets = list(map(lambda x: (x[0], x[1][:-2] + "_h"), mets))
-
-            # print(mets)
-
-            # Add reaction to model copy
-            add_single_gene_reaction_pair(
-                model=model,
-                gene_id=row['GENE_ID'],
-                reaction_id=row['ID'],
-                reaction_name=row['NAME'],
-                reaction_subsystem=row['PATHWAY'],
-                metabolites=mets
-            )
-        
-        # Print out results
-        print(f"New model {model.name} has {len(model.reactions)} reactions.")
-        print(f"Control model {ref_name} had {len(ref.reactions)} reactions.")
-
-        # Save altered model to repo
-        save_path = f"./data/altered/xmls/{ref_name}" + ("/h" if chloroplast else "")
-        if not os.path.exists(save_path): os.makedirs(save_path)
-        io.write_sbml_model(model, os.path.join(save_path, f"{item['name']}.xml"))
-
-        _ = input("Model Saved. Press Enter to continue...")
-        os.system('cls') # Clear terminal to avoid clump
+    # Save altered model to repo
+    save_path = os.path.join(args.outdir, ref_name)
+    if not os.path.exists(save_path): os.makedirs(save_path)
+    filepath = os.path.join(save_path, f"{new_name}.xml")
+    io.write_sbml_model(ref, filepath)
 
 
 if __name__ == "__main__":
@@ -136,8 +97,66 @@ if __name__ == "__main__":
         prog='_load_model',
         description='Load and validate your fba metabolic model from the .sbml format.'
     )
-    parser.add_argument('sbmlpath')
-    parser.add_argument('-ch', '--chloroplast', action='store_true')
+    parser.add_argument('--sbmlpath', required=True, help='Path to the input SBML model file.')
+    parser.add_argument('--outdir', default="./data/altered/xmls", help='Directory to save the altered model SBML files.')
+    parser.add_argument('--datadir', default="./data/altered/tables/stable", help='Directory containing the input CSV tables for reactions and compounds.')
     args = parser.parse_args()
 
-    alter(args.sbmlpath, args.chloroplast)
+    # Load sbml model
+    ref, _ = io.validate_sbml_model(args.sbmlpath, validate=True)
+    if not ref:
+        print('No model recognized. Exiting...')
+        sys.exit(1)
+
+    # Extract model name
+    ref_name = os.path.split(args.sbmlpath)[-1].split('.')[0]
+    print(f'Old model {ref_name} has {len(ref.reactions)} reactions.')
+
+    # Import alteration tables for reactions and compounds
+    rxns_df = pd.read_csv(os.path.join(args.datadir, "reactions.csv"))
+    mets_df = pd.read_csv(os.path.join(args.datadir, "metabolites.csv"))
+    genes_df = pd.read_csv(os.path.join(args.datadir, "genes.csv"))
+
+    # Add metabolites
+    for _, row in mets_df.iterrows():
+        try:
+            met = ref.metabolites.get_by_id(row['sbml_id'])
+        except KeyError:
+            met = Metabolite(row['sbml_id'])
+            met.name = row['display_name']
+            met.formula = str(row['formula']) if pd.notna(row['formula']) else ''
+            met.charge = int(row['charge']) if pd.notna(row['charge']) else 0
+            met.compartment = row['compartment_id']
+            met.annotation = {
+                'kegg.compound': row['kegg_id'] if pd.notna(row['kegg_id']) else '',
+                'chebi': row['chebi_id'] if pd.notna(row['chebi_id']) else '',
+                'pubchem.compound': str(row['pubchem_cid']) if pd.notna(row['pubchem_cid']) else '',
+                'inchikey': row['inchikey'] if pd.notna(row['inchikey']) else '',
+            }
+            ref.add_metabolites([met])
+
+    # Alter
+    sqe_sources = ['Bb', 'Sc', 'Cf', None]
+    sqs_sources = ['Sc', 'Cl', 'Tv', None]
+    sqe_sqs = list(product(sqe_sources, sqs_sources))
+    
+    for sqe_source, sqs_source in sqe_sqs:
+
+        if (sqe_source, sqs_source) == (None, None):
+            continue # Skip if no alteration, mva irrelevant w/o sqe or sqs
+
+        # w/o mva
+        alter(
+            args, 
+            ref=ref.copy(), ref_name=ref_name, 
+            rxns_df=rxns_df, genes_df=genes_df, 
+            sqe_source=sqe_source, sqs_source=sqs_source
+        )
+
+        # w/ mva
+        alter(
+            args, 
+            ref=ref.copy(), ref_name=ref_name, 
+            rxns_df=rxns_df, genes_df=genes_df, 
+            sqe_source=sqe_source, sqs_source=sqs_source, mva=True
+        )

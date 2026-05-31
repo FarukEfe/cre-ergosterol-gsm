@@ -46,10 +46,10 @@ def gapfill_model(args):
             met.charge = int(row['charge']) if pd.notna(row['charge']) else 0
             met.compartment = row['compartment_id']
             met.annotation = {
-                'kegg.compound': row['kegg_id'],
-                'chebi': row['chebi_id'],
-                'pubchem.compound': row['pubchem_cid'],
-                'inchikey': row['inchikey'],
+                'kegg.compound': row['kegg_id'] if pd.notna(row['kegg_id']) else '',
+                'chebi': row['chebi_id'] if pd.notna(row['chebi_id']) else '',
+                'pubchem.compound': row['pubchem_cid'] if pd.notna(row['pubchem_cid']) else '',
+                'inchikey': row['inchikey'] if pd.notna(row['inchikey']) else '',
             }
             model.add_metabolites([met])
 

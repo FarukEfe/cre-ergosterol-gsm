@@ -1,26 +1,162 @@
 [
     {
-        "name": "SQS",
-        "ec": ["2.5.1.21"]
+        "name": "WT",
+        "description": "Unmodified iCre1355 gapfilled model. No heterologous genes added.",
+        "constructs": {
+            "sqs": null,
+            "sqe": null,
+            "mva": false
+        },
+        "reaction_ids": []
     },
     {
-        "name": "SQE",
-        "ec": ["1.14.14.17"]
+        "name": "SQE_Bb",
+        "description": "Single SQE overexpression — B. braunii BbSQE (BBa_25UAU0L9). Best ecFBA candidate.",
+        "constructs": {
+            "sqs": null,
+            "sqe": "Bb",
+            "mva": false
+        },
+        "reaction_ids": ["ALT_SQEBb"]
     },
     {
-        "name": "SQS+SQE",
-        "ec": ["2.5.1.21", "1.14.14.17"]
+        "name": "SQE_Cf",
+        "description": "Single SQE overexpression — C. reinhardtii native CrSQE (BBa_25FZTRN6). Locus Cre17.g734644.",
+        "constructs": {
+            "sqs": null,
+            "sqe": "Cf",
+            "mva": false
+        },
+        "reaction_ids": ["ALT_SQECf"]
     },
     {
-        "name": "SQS+MVA",
-        "ec": ["2.5.1.21", "2.3.3.10", "1.1.1.88", "2.7.4.2", "2.7.1.36", "4.1.1.33", "5.3.3.2"]
+        "name": "SQE_Sc",
+        "description": "Single SQE overexpression — S. cerevisiae ERG1 codon-optimised for Cre (BBa_25FKDZGJ).",
+        "constructs": {
+            "sqs": null,
+            "sqe": "Sc",
+            "mva": false
+        },
+        "reaction_ids": ["ALT_SQESc"]
     },
     {
-        "name": "SQE+MVA",
-        "ec": ["1.14.14.17", "2.3.3.10", "1.1.1.88", "2.7.4.2", "2.7.1.36", "4.1.1.33", "5.3.3.2"]
+        "name": "SQS_Sc",
+        "description": "Single SQS overexpression — S. cerevisiae ERG9 (BBa_25BB8433).",
+        "constructs": {
+            "sqs": "Sc",
+            "sqe": null,
+            "mva": false
+        },
+        "reaction_ids": ["ALT_PSPPSSc", "ALT_SQSSc"]
     },
     {
-        "name": "SQS+SQE+MVA",
-        "ec": ["2.5.1.21", "1.14.14.17", "2.3.3.10", "1.1.1.88", "2.7.4.2", "2.7.1.36", "4.1.1.33", "5.3.3.2"]
+        "name": "SQS_Cl",
+        "description": "Single SQS overexpression — C. reinhardtii native CrSQS (BBa_25C1BLRU). Locus Cre03.g175250.",
+        "constructs": {
+            "sqs": "Cl",
+            "sqe": null,
+            "mva": false
+        },
+        "reaction_ids": ["ALT_PSPPSCl", "ALT_SQSCl"]
+    },
+    {
+        "name": "SQS_Tv",
+        "description": "Single SQS overexpression — T. vestitus thermostable SQS (BBa_25QH9X66). KEGG tll1448.",
+        "constructs": {
+            "sqs": "Tv",
+            "sqe": null,
+            "mva": false
+        },
+        "reaction_ids": ["ALT_PSPPSTv", "ALT_SQSTv"]
+    },
+    {
+        "name": "SQS_Sc_SQE_Bb",
+        "description": "Dual overexpression — S. cerevisiae SQS + B. braunii SQE.",
+        "constructs": {
+            "sqs": "Sc",
+            "sqe": "Bb",
+            "mva": false
+        },
+        "reaction_ids": ["ALT_PSPPSSc", "ALT_SQSSc", "ALT_SQEBb"]
+    },
+    {
+        "name": "SQS_Sc_SQE_Cf",
+        "description": "Dual overexpression — S. cerevisiae SQS + C. reinhardtii native SQE overexpression.",
+        "constructs": {
+            "sqs": "Sc",
+            "sqe": "Cf",
+            "mva": false
+        },
+        "reaction_ids": ["ALT_PSPPSSc", "ALT_SQSSc", "ALT_SQECf"]
+    },
+    {
+        "name": "SQS_Sc_SQE_Sc",
+        "description": "Dual overexpression — S. cerevisiae SQS + S. cerevisiae SQE.",
+        "constructs": {
+            "sqs": "Sc",
+            "sqe": "Sc",
+            "mva": false
+        },
+        "reaction_ids": ["ALT_PSPPSSc", "ALT_SQSSc", "ALT_SQESc"]
+    },
+    {
+        "name": "SQS_Cl_SQE_Bb",
+        "description": "Dual overexpression — C. reinhardtii native SQS + B. braunii SQE.",
+        "constructs": {
+            "sqs": "Cl",
+            "sqe": "Bb",
+            "mva": false
+        },
+        "reaction_ids": ["ALT_PSPPSCl", "ALT_SQSCl", "ALT_SQEBb"]
+    },
+    {
+        "name": "SQS_Tv_SQE_Bb",
+        "description": "Dual overexpression — T. vestitus SQS + B. braunii SQE.",
+        "constructs": {
+            "sqs": "Tv",
+            "sqe": "Bb",
+            "mva": false
+        },
+        "reaction_ids": ["ALT_PSPPSTv", "ALT_SQSTv", "ALT_SQEBb"]
+    },
+    {
+        "name": "SQE_Bb_MVA",
+        "description": "B. braunii SQE + full MVA module (MVAS+MVAE+MVK+PMK+MVAD+IDLI).",
+        "constructs": {
+            "sqs": null,
+            "sqe": "Bb",
+            "mva": true
+        },
+        "reaction_ids": ["ALT_MVAS", "ALT_MVAE", "ALT_MVK", "ALT_PMK", "ALT_MVAD", "ALT_IDLI", "ALT_SQEBb"]
+    },
+    {
+        "name": "SQS_Sc_MVA",
+        "description": "S. cerevisiae SQS + full MVA module.",
+        "constructs": {
+            "sqs": "Sc",
+            "sqe": null,
+            "mva": true
+        },
+        "reaction_ids": ["ALT_MVAS", "ALT_MVAE", "ALT_MVK", "ALT_PMK", "ALT_MVAD", "ALT_IDLI", "ALT_PSPPSSc", "ALT_SQSSc"]
+    },
+    {
+        "name": "SQS_Sc_SQE_Bb_MVA",
+        "description": "Full stack — S. cerevisiae SQS + B. braunii SQE + MVA module. Primary high-flux candidate.",
+        "constructs": {
+            "sqs": "Sc",
+            "sqe": "Bb",
+            "mva": true
+        },
+        "reaction_ids": ["ALT_MVAS", "ALT_MVAE", "ALT_MVK", "ALT_PMK", "ALT_MVAD", "ALT_IDLI", "ALT_PSPPSSc", "ALT_SQSSc", "ALT_SQEBb"]
+    },
+    {
+        "name": "SQS_Tv_SQE_Bb_MVA",
+        "description": "Full stack — T. vestitus SQS + B. braunii SQE + MVA module.",
+        "constructs": {
+            "sqs": "Tv",
+            "sqe": "Bb",
+            "mva": true
+        },
+        "reaction_ids": ["ALT_MVAS", "ALT_MVAE", "ALT_MVK", "ALT_PMK", "ALT_MVAD", "ALT_IDLI", "ALT_PSPPSTv", "ALT_SQSTv", "ALT_SQEBb"]
     }
 ]
