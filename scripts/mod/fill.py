@@ -104,8 +104,8 @@ def gapfill_model(args):
 if __name__ == "__main__":
     # Script Argument(s)
     parser = argparse.ArgumentParser(
-        prog='_load_model',
-        description='Load and validate your fba metabolic model from the .sbml format.'
+        prog='gapfill',
+        description='Gapfill your model with manually collected reactions and compounds.'
     )
     parser.add_argument('--sbmlpath', default="./data/raw/iCre1355/iCre1355_auto.xml", help='Path to the input SBML model file.')
     parser.add_argument('--outdir', default="./data/fill/xmls", help='Directory to save the gapfilled model SBML file.')

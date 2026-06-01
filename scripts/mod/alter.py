@@ -94,8 +94,8 @@ if __name__ == "__main__":
 
     # Script Argument(s)
     parser = argparse.ArgumentParser(
-        prog='_load_model',
-        description='Load and validate your fba metabolic model from the .sbml format.'
+        prog='alter',
+        description='Alter your model to specific constructs.'
     )
     parser.add_argument('--sbmlpath', required=True, help='Path to the input SBML model file.')
     parser.add_argument('--outdir', default="./data/altered/xmls", help='Directory to save the altered model SBML files.')
