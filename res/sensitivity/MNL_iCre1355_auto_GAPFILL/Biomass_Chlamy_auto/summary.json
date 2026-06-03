@@ -1,0 +1,35 @@
+{
+  "timestamp": "2026-06-02T20:40:53.891662",
+  "cob\u0440\u0430py_version": "0.31.1",
+  "solver": null,
+  "model_md5": "2e708df99877ebf9bc9337d1404deff7",
+  "sbmlpath": "./data/sink/xmls/MNL_iCre1355_auto_GAPFILL.xml",
+  "n_reactions": 2410,
+  "n_metabolites": 1857,
+  "n_genes": 1972,
+  "wt_mu": 0.0514496516803127,
+  "top_shadow_price_mets": [
+    "obfool_c",
+    "7dhporiferasterol_c",
+    "24menlophenol_c",
+    "ergost7enol_c",
+    "ergosterol_c",
+    "ergtrienol_c",
+    "episterol_c",
+    "frdp_c",
+    "grdp_c",
+    "dxyl5p_h"
+  ],
+  "top_reduced_cost_rxns": [
+    "CYP710_ERG5",
+    "ERG28",
+    "OBFOOLOR",
+    "CYARTMT",
+    "CYEUOLS",
+    "SMT1_CROSS",
+    "CDI1_BRANCH",
+    "SMT1_2ND",
+    "MERGTROLR",
+    "STE1_ERG3"
+  ]
+}
