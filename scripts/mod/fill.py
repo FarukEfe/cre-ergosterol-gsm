@@ -97,7 +97,7 @@ def gapfill_model(args):
 
     # Save model
     os.makedirs(args.outdir, exist_ok=True)
-    save_file = os.path.join(args.outdir, f"MNL_{model_name}_GAPFILL.xml")
+    save_file = os.path.join(args.outdir, f"{model_name}.xml")
     io.write_sbml_model(model, save_file)
 
 
@@ -107,7 +107,7 @@ if __name__ == "__main__":
         prog='gapfill',
         description='Gapfill your model with manually collected reactions and compounds.'
     )
-    parser.add_argument('--sbmlpath', default="./data/raw/iCre1355/iCre1355_auto.xml", help='Path to the input SBML model file.')
+    parser.add_argument('--sbmlpath', default="./data/raw/xmls/iCre1355_auto.xml", help='Path to the input SBML model file.')
     parser.add_argument('--outdir', default="./data/fill/xmls", help='Directory to save the gapfilled model SBML file.')
     parser.add_argument('--datadir', default="./data/fill/tables/stable", help='Directory containing the input CSV tables for genes, reactions, and metabolites.')
     args = parser.parse_args()

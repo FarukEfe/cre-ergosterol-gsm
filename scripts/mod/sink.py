@@ -39,7 +39,7 @@ if __name__ == "__main__":
         prog='sink',
         description='Create a sink/demand reaction for given metabolite(s) in the model.'
     )
-    parser.add_argument('--sbmlpath', default="./data/coupled/xmls/MNL_iCre1355_auto_GAPFILL.xml", help='Path to the input SBML model file.')
+    parser.add_argument('--sbmlpath', default="./data/coupled/xmls/iCre1355_auto.xml", help='Path to the input SBML model file.')
     parser.add_argument('--metabolites', nargs='+', default=['ergosterol_c', '7dhporiferasterol_c', 'ergost7enol_c'], help='List of metabolite IDs to create sink reactions for.')
     parser.add_argument('--outdir', default="./data/sink/xmls", help='Directory to save the new model SBML file.')
     args = parser.parse_args()

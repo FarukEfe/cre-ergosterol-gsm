@@ -45,7 +45,7 @@ if __name__ == "__main__":
         prog='couple',
         description='Couple the biomass reaction to the ergosterol pathway.'
     )
-    parser.add_argument('--sbmlpath', default="./data/fill/xmls/MNL_iCre1355_auto_GAPFILL.xml", help='Path to the input SBML model file.')
+    parser.add_argument('--sbmlpath', default="./data/fill/xmls/iCre1355_auto.xml", help='Path to the input SBML model file.')
     parser.add_argument('--outdir', default="./data/coupled/xmls", help='Directory to save the coupled model SBML file.')
     args = parser.parse_args()
 
