@@ -1,0 +1,11 @@
+name,growth_mode,mu_obs,mu_pred,objective,co2_ub,nh4_ub,pi_ub,acet_ub,light_ub,R2
+Autotrophic_Rep1,Autotrophic,0.033,0.03352002212625444,Biomass_Chlamy_auto,-1.289,-0.569,-0.032,0.0,,0.7181694713053224
+Autotrophic_Rep2,Autotrophic,0.033,0.04204957411938239,Biomass_Chlamy_auto,,-0.734,-0.024,0.0,,0.7181694713053224
+Autotrophic_Rep3,Autotrophic,0.042,0.04380163970768361,Biomass_Chlamy_auto,-1.752,-0.514,-0.025,0.0,,0.7181694713053224
+Autotrophic_Rep4,Autotrophic,0.042,0.04555370529598249,Biomass_Chlamy_auto,-1.775,-0.486,-0.026,0.0,,0.7181694713053224
+Mixotrophic_Rep1,Mixotrophic,0.082,0.1036895846762452,Biomass_Chlamy_mixo,,-3.035,-0.099,-1.364,,0.7181694713053224
+Mixotrophic_Rep2,Mixotrophic,0.082,0.08169482429037495,Biomass_Chlamy_mixo,,-0.748,-0.078,-2.261,,0.7181694713053224
+Mixotrophic_Rep3,Mixotrophic,0.061,0.049226368482690366,Biomass_Chlamy_mixo,,-1.259,-0.047,-1.059,,0.7181694713053224
+Mixotrophic_Rep4,Mixotrophic,0.061,0.04294215122958417,Biomass_Chlamy_mixo,,-1.071,-0.041,-1.234,,0.7181694713053224
+Heterotrophic_Rep1,Heterotrophic,0.024,0.0162044208922508,Biomass_Chlamy_hetero,,-0.439,-0.01,-1.579,0.0,0.7181694713053224
+Heterotrophic_Rep2,Heterotrophic,0.028,0.019445305070701583,Biomass_Chlamy_hetero,,-0.454,-0.012,-1.599,0.0,0.7181694713053224

@@ -1,6 +1,0 @@
-"ID","NAME_SHORT","NAME_LONG","FORMULA","MOL_WEIGHT","CHARGE"
-"methylop_c","24-methylenelophenol","4alpha-methyl,24-methylene-cholest-7-en-3beta-ol","C29H48O","412.7","0"
-"episterol_c","Episterol","Ergosta-7,24(28)-dien-3-ol","C28H46O","398.7","0"
-"ergtrienol_c","Ergosta-5,7,24(28)-trienol","24-methylene-cholesta-5,7,22E-trien-3beta-ol","C28H42O","394.6","0"
-"ergtetraenol_c","5,7,22,24(28)-ergostatetraenol","Ergosta-5,7,22,24(28)-tetraen-3beta-ol","C28H42O","394.6","0"
-"ergosterol_c","Ergosterol","Ergosta-5,7,22E-trien-3beta-ol","C28H44O","396.6","0"

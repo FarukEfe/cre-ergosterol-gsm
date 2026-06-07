@@ -13,7 +13,6 @@ geckopy
 # CLI
 argparse
 # Visualization
-manim
 kaleido
 plotly
 seaborn
